@@ -6,8 +6,9 @@ on:
 
 jobs:
   vercel-deploy:
+    # Skip this job unless a Vercel token is configured in repository secrets
+    if: ${{ secrets.VERCEL_TOKEN != '' }} && (github.event.pusher != null)
     runs-on: ubuntu-latest
-    if: github.event.pusher != null
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node

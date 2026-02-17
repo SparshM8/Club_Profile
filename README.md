@@ -62,11 +62,20 @@ create table if not exists subscribers (
 ## Deploying to Vercel (CI)
 
 1. Connect this repository to Vercel (https://vercel.com/new).
-2. Add the following repository secrets in Vercel/GitHub Actions (if you want CI -> Vercel automatic deploy):
-   - `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` (used by the included GitHub Action)
-   - `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (optional)
-   - `NEXT_PUBLIC_GA_ID` (optional)
-   - `NEXT_PUBLIC_METADATA_BASE` (optional)
-3. Push to `main` — the `.github/workflows/vercel-deploy.yml` will attempt to deploy when secrets are provided.
+2. Add the required repository secrets in GitHub: Settings → Secrets and variables → Actions → New repository secret.
+   - Name: `VERCEL_TOKEN` — Value: your Vercel personal token (required)
+   - Optional (but recommended): `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` — used for automated deploys
+   - Optional: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `NEXT_PUBLIC_GA_ID`, `NEXT_PUBLIC_METADATA_BASE`
+
+   Steps to add a secret in GitHub:
+   1. Go to your repository Settings → Secrets and variables → Actions.
+   2. Click **New repository secret**.
+   3. Enter **Name** (e.g. `VERCEL_TOKEN`) and **Value** (your Vercel token), then **Add secret**.
+
+3. Push to `main` — the `.github/workflows/vercel-deploy.yml` will run the deploy job only when `VERCEL_TOKEN` is present.
+
+Notes:
+- The CI deploy job is skipped automatically if `VERCEL_TOKEN` is not set (avoids failures while you add secrets).
+- Once you add the secrets, re-run the workflow or push a commit to trigger the deploy.
 
 CI: A basic GitHub Actions CI is included to validate builds on push (see `.github/workflows/ci.yml`).
