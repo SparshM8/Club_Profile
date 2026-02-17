@@ -1,26 +1,202 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-bg: #05060a;
+  --color-fg: #e5e7eb;
+  --color-muted: #9ca3af;
+  --color-line: rgba(148, 163, 184, 0.18);
+  --color-glass: rgba(15, 23, 42, 0.55);
+  --color-accent: #7dd3fc;
+  --color-accent-strong: #38bdf8;
+  --color-accent-lime: #a3e635;
+  --color-accent-violet: #8b5cf6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  /* theme variables (kept for compatibility with Tailwind v4 @theme inline) */
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body), system-ui, sans-serif;
+  min-height: 100vh;
 }
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora {
+  position: fixed;
+  inset: -20% -20% auto -20%;
+  height: 80vh;
+  background: radial-gradient(60% 60% at 15% 20%, rgba(56, 189, 248, 0.4), transparent 65%),
+    radial-gradient(55% 55% at 60% 10%, rgba(163, 230, 53, 0.28), transparent 60%),
+    radial-gradient(55% 55% at 85% 30%, rgba(139, 92, 246, 0.35), transparent 65%);
+  filter: blur(40px);
+  opacity: 0.9;
+  animation: auroraShift 18s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass {
+  background: var(--color-glass);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  -webkit-backdrop-filter: blur(16px); /* Safari support */
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(2, 6, 23, 0.45);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #ffffff, var(--color-accent), var(--color-accent-lime));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.snap-root {
+  scroll-snap-type: y proximity;
+}
+
+@media (max-width: 1024px) {
+  .snap-root {
+    scroll-snap-type: none;
+  }
+}
+
+.cursor-glow {
+  position: fixed;
+  width: 320px;
+  height: 320px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent 65%);
+  filter: blur(6px);
+  opacity: 0.8;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(163, 230, 53, 0.4);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.2s ease;
+}
+
+.tilt-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(400px 120px at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.15), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tilt-card:hover::after {
+  opacity: 1;
+}
+
+@keyframes auroraShift {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  100% {
+    transform: translateY(20px) scale(1.05);
+  }
+}
+
+@keyframes floatSlow {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Accessibility & reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .aurora,
+  .cursor-glow,
+  .cursor-ring,
+  .tilt-card,
+  .glass,
+  *[class*="motion"],
+  *[data-motion]
+  {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  /* keep interactions usable but without motion */
+  .tilt-card:hover::after {
+    opacity: 0 !important;
+  }
+}
+
+/* Visible focus states for keyboard users */
+:focus-visible {
+  outline: 3px solid rgba(125, 211, 252, 0.18);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Small utility for accessibility-focused UI */
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+}
+
+/* Skip-link (visible when focused) */
+.skip-link {
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.skip-link:focus {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
